@@ -1,0 +1,9 @@
+model VehicleType {
+  code         String         @id @db.VarChar(32)
+  name         String         @unique
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  dailyTraffic DailyTraffic[] @relation("DailyTrafficVehicleType")
+
+  @@map("vehicle_types")
+}

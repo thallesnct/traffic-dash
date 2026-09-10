@@ -1,0 +1,15 @@
+model DailyTraffic {
+  recordedDate DateTime    @map("recorded_date") @db.Date
+  countryCode  String      @map("country_code") @db.Char(2)
+  vehicleType  String      @map("vehicle_type") @db.VarChar(32)
+  vehicleCount Int         @map("vehicle_count")
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  country      Country     @relation("DailyTrafficCountry", fields: [countryCode], references: [code], onDelete: Restrict)
+  vehicle      VehicleType @relation("DailyTrafficVehicleType", fields: [vehicleType], references: [code], onDelete: Restrict)
+
+  @@id([recordedDate, countryCode, vehicleType])
+  @@index([countryCode, recordedDate], map: "idx_daily_country_date")
+  @@index([recordedDate], map: "idx_daily_date")
+  @@map("daily_traffic")
+}
