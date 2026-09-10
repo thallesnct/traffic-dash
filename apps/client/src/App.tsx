@@ -2,11 +2,12 @@ import { CountryBarChart } from "./components/CountryBarChart";
 import { TrendChart } from "./components/TrendChart";
 import { WindowSwitcher } from "./components/WindowSwitcher";
 import { TrafficWindowProvider } from "./contexts/TrafficWindowContext";
+import "./App.css";
 
 export default function App() {
   return (
     <TrafficWindowProvider>
-      <main>
+      <main className="app">
         <header>
           <h1>Traffic Insights</h1>
           <WindowSwitcher />

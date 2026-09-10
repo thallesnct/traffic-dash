@@ -9,9 +9,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { useTrend } from "../hooks/useTrafficData";
-import { useTrafficWindow } from "../hooks/useTrafficWindow";
-import { colorForCode } from "../lib/colors";
+import { useTrend } from "../../hooks/useTrafficData";
+import { useTrafficWindow } from "../../hooks/useTrafficWindow";
+import { colorForCode } from "../../lib/colors";
 
 const VISIBLE_SERIES = 5;
 
@@ -48,10 +48,11 @@ export function TrendChart() {
   const { dates, series, other } = data.body.data;
   const visible = series.slice(0, VISIBLE_SERIES);
 
-  if (visible.length === 0)
+  if (visible.length === 0) {
     return (
       <p>No vehicles participating traffic were recorded in this window.</p>
     );
+  }
 
   const rows = dates.map((date, index) => {
     const row: Record<string, string | number> = { date };

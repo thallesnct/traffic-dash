@@ -10,16 +10,18 @@ import {
   type BarShapeProps,
 } from "recharts";
 
-import { useByCountry } from "../hooks/useTrafficData";
-import { useTrafficWindow } from "../hooks/useTrafficWindow";
-import { SERIES_COLORS } from "../lib/colors";
+import { useByCountry } from "../../hooks/useTrafficData";
+import { useTrafficWindow } from "../../hooks/useTrafficWindow";
+import { SERIES_COLORS } from "../../lib/colors";
 
 const COUNTRY_ROW_HEIGHT = 30;
 const MIN_CHART_HEIGHT = 340;
 const CHART_VIEWPORT_HEIGHT = 520;
 
 function barOpacity(index: number, total: number): number {
-  if (total <= 1) return 1;
+  if (total <= 1) {
+    return 1;
+  }
 
   return 1 - (index / (total - 1)) * 0.6;
 }
