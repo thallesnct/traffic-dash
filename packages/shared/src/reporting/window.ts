@@ -16,11 +16,15 @@ export function toIsoDate(date: Date): IsoDate {
   return date.toISOString().substring(0, 10);
 }
 
+export function fromIsoDate(value: IsoDate): Date {
+  return new Date(`${value}T00:00:00.000Z`);
+}
+
 export const isoDateSchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine((value) => {
-    const date = new Date(`${value}T00:00:00.000Z`);
+    const date = fromIsoDate(value);
 
     return !Number.isNaN(date.getTime()) && toIsoDate(date) === value;
   }, "Invalid ISO date");
@@ -55,9 +59,7 @@ export function resolvePreviousWindow(
 ): WindowResult {
   const { startDate, days } = resolveWindow(window, today);
 
-  const _startDate = new Date(`${startDate}T00:00:00.000Z`);
-
-  const newEndDate = new Date(_startDate);
+  const newEndDate = fromIsoDate(startDate);
   newEndDate.setUTCDate(newEndDate.getUTCDate() - 1);
 
   const newStartDate = new Date(newEndDate);

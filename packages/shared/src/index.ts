@@ -21,6 +21,7 @@ export {
 } from "./resources/vehicle-type";
 
 export {
+  fromIsoDate,
   resolvePreviousWindow,
   resolveWindow,
   toIsoDate,

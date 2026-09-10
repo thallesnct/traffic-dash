@@ -3,16 +3,17 @@ import type { CountryCode } from "./resources/country";
 
 export type CacheEndpoint = "trend" | "by-country" | "by-vehicle-type";
 
-type AggregateCacheKeyInput = {
-  endpoint: "trend" | "by-country";
+type BaseCacheKeyInput = {
   generation: number;
   window: Window;
 };
 
-type VehicleTypeCacheKeyInput = {
-  endpoint: "by-vehicle-type";
-  generation: number;
-  window: Window;
+type AggregateCacheKeyInput = BaseCacheKeyInput & {
+  endpoint: Exclude<CacheEndpoint, "by-vehicle-type">;
+};
+
+type VehicleTypeCacheKeyInput = BaseCacheKeyInput & {
+  endpoint: Extract<CacheEndpoint, "by-vehicle-type">;
   country?: CountryCode;
 };
 
