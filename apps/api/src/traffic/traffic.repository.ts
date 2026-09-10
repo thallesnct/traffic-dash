@@ -20,8 +20,11 @@ export type VehicleTypeTotalRow = {
   total: number;
 };
 
-function dateRange(from: IsoDate, to: IsoDate): { gte: Date; lte: Date } {
-  return { gte: fromIsoDate(from), lte: fromIsoDate(to) };
+function dateRange(
+  startDate: IsoDate,
+  endDate: IsoDate,
+): { gte: Date; lte: Date } {
+  return { gte: fromIsoDate(startDate), lte: fromIsoDate(endDate) };
 }
 
 function naturalKey(date: IsoDate, country: string, type: string) {
@@ -39,13 +42,13 @@ export class TrafficRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async dailySeriesByCountry(
-    from: IsoDate,
-    to: IsoDate,
+    startDate: IsoDate,
+    endDate: IsoDate,
     vehicleType?: string,
   ): Promise<DailySeriesRow[]> {
     const rows = await this.prisma.dailyTraffic.groupBy({
       by: ["recordedDate", "countryCode"],
-      where: { recordedDate: dateRange(from, to), vehicleType },
+      where: { recordedDate: dateRange(startDate, endDate), vehicleType },
       _sum: { vehicleCount: true },
       orderBy: [{ recordedDate: "asc" }, { countryCode: "asc" }],
     });
@@ -58,13 +61,13 @@ export class TrafficRepository {
   }
 
   async countryTotals(
-    from: IsoDate,
-    to: IsoDate,
+    startDate: IsoDate,
+    endDate: IsoDate,
     vehicleType?: string,
   ): Promise<CountryTotalRow[]> {
     const rows = await this.prisma.dailyTraffic.groupBy({
       by: ["countryCode"],
-      where: { recordedDate: dateRange(from, to), vehicleType },
+      where: { recordedDate: dateRange(startDate, endDate), vehicleType },
       _sum: { vehicleCount: true },
       orderBy: { _sum: { vehicleCount: "desc" } },
     });
@@ -76,13 +79,16 @@ export class TrafficRepository {
   }
 
   async vehicleTypeTotals(
-    from: IsoDate,
-    to: IsoDate,
+    startDate: IsoDate,
+    endDate: IsoDate,
     country?: string,
   ): Promise<VehicleTypeTotalRow[]> {
     const rows = await this.prisma.dailyTraffic.groupBy({
       by: ["vehicleType"],
-      where: { recordedDate: dateRange(from, to), countryCode: country },
+      where: {
+        recordedDate: dateRange(startDate, endDate),
+        countryCode: country,
+      },
       _sum: { vehicleCount: true },
       orderBy: { _sum: { vehicleCount: "desc" } },
     });
