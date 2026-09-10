@@ -1,4 +1,3 @@
-import * as country from "./resources/country";
 export {
   countryCodeSchema,
   countrySchema,
@@ -10,7 +9,6 @@ export {
   type CountriesResponse,
 } from "./resources/country";
 
-import * as vehicleType from "./resources/vehicle-type";
 export {
   vehicleTypeCodeSchema,
   vehicleTypeSchema,
@@ -22,7 +20,6 @@ export {
   type VehicleTypesResponse,
 } from "./resources/vehicle-type";
 
-import * as window from "./reporting/window";
 export {
   resolvePreviousWindow,
   resolveWindow,
@@ -35,12 +32,34 @@ export {
 } from "./reporting/window";
 export { isoDateSchema, WINDOWS, windowSchema } from "./reporting/window";
 
-import * as traffic from "./traffic/traffic";
-export * from "./traffic/traffic";
-
-export default {
-  country,
-  vehicleType,
-  window,
-  traffic,
-};
+export {
+  createUpsertTrafficParamsSchema,
+  upsertTrafficParamsSchema,
+  upsertTrafficSchema,
+} from "./traffic/traffic";
+export {
+  type UpsertTraffic,
+  type UpsertTrafficParams,
+} from "./traffic/traffic";
+export {
+  byCountryQuerySchema,
+  byVehicleTypeQuerySchema,
+  trendQuerySchema,
+} from "./traffic/query";
+export {
+  type ByCountryQuery,
+  type ByVehicleTypeQuery,
+  type TrendQuery,
+} from "./traffic/query";
+export {
+  byCountryResponseSchema,
+  byVehicleTypeResponseSchema,
+  trendResponseSchema,
+  upsertTrafficResponseSchema,
+} from "./traffic/response";
+export {
+  type ByCountryResponse,
+  type ByVehicleTypeResponse,
+  type TrendResponse,
+  type UpsertTrafficResponse,
+} from "./traffic/response";

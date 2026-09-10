@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  byCountryQuerySchema,
-  byVehicleTypeQuerySchema,
   createUpsertTrafficParamsSchema,
-  trendQuerySchema,
   upsertTrafficSchema,
 } from "./traffic";
 
@@ -49,37 +46,5 @@ describe("Traffic | upsertTrafficSchema", () => {
         false,
       );
     }
-  });
-});
-
-describe("Traffic | query schemas", () => {
-  it("defaults the trend window and parses a de-duplicated country list", () => {
-    expect(
-      trendQuerySchema.parse({
-        vehicleType: "car",
-        countries: "br, US, br",
-      }),
-    ).toEqual({
-      window: "30d",
-      vehicleType: "car",
-      countries: ["BR", "US"],
-    });
-  });
-
-  it("rejects an empty or malformed country-list member", () => {
-    expect(trendQuerySchema.safeParse({ countries: " , " }).success).toBe(
-      false,
-    );
-    expect(trendQuerySchema.safeParse({ countries: "BR, BRA" }).success).toBe(
-      false,
-    );
-  });
-
-  it("defaults aggregate-query windows", () => {
-    expect(byCountryQuerySchema.parse({})).toEqual({ window: "30d" });
-    expect(byVehicleTypeQuerySchema.parse({ country: "br" })).toEqual({
-      window: "30d",
-      country: "BR",
-    });
   });
 });
