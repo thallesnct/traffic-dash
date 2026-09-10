@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   resolvePreviousWindow,
   resolveWindow,
+  responseKey,
   toIsoDate,
   type ByCountryResponse,
   type ByVehicleTypeResponse,
@@ -13,7 +14,8 @@ import {
   type Window,
 } from "@traffic-dashboard/shared";
 
-import { UNCACHED, type Served } from "../common/served";
+import { RedisCacheService } from "../cache/redis-cache.service";
+import type { Served } from "../common/served";
 import { CountriesService } from "../countries/countries.service";
 import { VehicleTypesService } from "../vehicle-types/vehicle-types.service";
 import {
@@ -25,6 +27,7 @@ import {
 import { TrafficRepository, type DailySeriesRow } from "./traffic.repository";
 
 const TREND_COUNTRY_LIMIT = 5;
+const RESPONSE_TTL_SECONDS = 60;
 
 export type UpsertedTraffic = UpsertTrafficResponse["data"];
 
@@ -46,6 +49,7 @@ function sumRowTotals(rows: readonly { total: number }[]): number {
 export class TrafficService {
   constructor(
     private readonly repository: TrafficRepository,
+    private readonly cache: RedisCacheService,
     private readonly countries: CountriesService,
     private readonly vehicleTypes: VehicleTypesService,
   ) {}
@@ -56,7 +60,42 @@ export class TrafficService {
     return new Map(data.map(({ code, name }) => [code, name]));
   }
 
-  async getTrend(window: Window, now?: Date): Promise<Served<TrendResponse>> {
+  async getTrend(window: Window): Promise<Served<TrendResponse>> {
+    const generation = await this.cache.getGeneration();
+
+    return this.cache.getOrSetJson(
+      responseKey({ endpoint: "trend", generation, window }),
+      RESPONSE_TTL_SECONDS,
+      () => this.getTrendUncached(window),
+    );
+  }
+
+  async getByCountry(window: Window): Promise<Served<ByCountryResponse>> {
+    const generation = await this.cache.getGeneration();
+
+    return this.cache.getOrSetJson(
+      responseKey({ endpoint: "by-country", generation, window }),
+      RESPONSE_TTL_SECONDS,
+      () => this.getByCountryUncached(window),
+    );
+  }
+
+  async getByVehicleType(
+    window: Window,
+    country?: CountryCode,
+  ): Promise<Served<ByVehicleTypeResponse>> {
+    if (country !== undefined) await this.countries.assertExists(country);
+
+    const generation = await this.cache.getGeneration();
+
+    return this.cache.getOrSetJson(
+      responseKey({ endpoint: "by-vehicle-type", generation, window, country }),
+      RESPONSE_TTL_SECONDS,
+      () => this.getByVehicleTypeUncached(window, country),
+    );
+  }
+
+  async getTrendUncached(window: Window, now?: Date): Promise<TrendResponse> {
     const clock = now ?? new Date();
     const current = resolveWindow(window, clock);
     const previous = resolvePreviousWindow(window, clock);
@@ -78,16 +117,13 @@ export class TrafficService {
       names,
     );
 
-    return {
-      body: toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window),
-      ...UNCACHED,
-    };
+    return toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window);
   }
 
-  async getByCountry(
+  async getByCountryUncached(
     window: Window,
     now?: Date,
-  ): Promise<Served<ByCountryResponse>> {
+  ): Promise<ByCountryResponse> {
     const { startDate, endDate } = resolveWindow(window, now ?? new Date());
 
     const [rows, names] = await Promise.all([
@@ -96,25 +132,20 @@ export class TrafficService {
     ]);
 
     return {
-      body: {
-        data: rows.map((row) => ({
-          countryCode: row.countryCode,
-          countryName: names.get(row.countryCode) ?? row.countryCode,
-          totalVehicles: row.total,
-        })),
-        meta: { window, through: endDate, total: sumRowTotals(rows) },
-      },
-      ...UNCACHED,
+      data: rows.map((row) => ({
+        countryCode: row.countryCode,
+        countryName: names.get(row.countryCode) ?? row.countryCode,
+        totalVehicles: row.total,
+      })),
+      meta: { window, through: endDate, total: sumRowTotals(rows) },
     };
   }
 
-  async getByVehicleType(
+  async getByVehicleTypeUncached(
     window: Window,
     country?: CountryCode,
     now?: Date,
-  ): Promise<Served<ByVehicleTypeResponse>> {
-    if (country !== undefined) await this.countries.assertExists(country);
-
+  ): Promise<ByVehicleTypeResponse> {
     const { startDate, endDate } = resolveWindow(window, now ?? new Date());
     const rows = await this.repository.vehicleTypeTotals(
       startDate,
@@ -124,15 +155,12 @@ export class TrafficService {
     const total = sumRowTotals(rows);
 
     return {
-      body: {
-        data: rows.map((row) => ({
-          vehicleType: row.vehicleType,
-          totalVehicles: row.total,
-          percentage: percentageOfTotal(row.total, total),
-        })),
-        meta: { window, through: endDate, total },
-      },
-      ...UNCACHED,
+      data: rows.map((row) => ({
+        vehicleType: row.vehicleType,
+        totalVehicles: row.total,
+        percentage: percentageOfTotal(row.total, total),
+      })),
+      meta: { window, through: endDate, total },
     };
   }
 

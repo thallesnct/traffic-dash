@@ -4,10 +4,6 @@ export type CacheTier = "hit" | "miss";
 
 export type Served<TResponse> = { body: TResponse; cacheTier: CacheTier };
 
-export const UNCACHED = { cacheTier: "miss" } as const satisfies {
-  cacheTier: CacheTier;
-};
-
 export function serveWithCacheHeaders<TResponse>(
   served: Served<TResponse>,
   response: Response,
