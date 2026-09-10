@@ -1,12 +1,6 @@
 /* DistributionPanel styles */
 .distribution-panel {
   flex: 1 1 0;
-  min-width: 0;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface-raised);
-  box-shadow: 0 8px 20px var(--shadow-panel);
 }
 
 .distribution-panel__control {

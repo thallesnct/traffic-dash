@@ -1,5 +1,6 @@
 import { useDeferredValue } from "react";
 
+import { Card } from "../../Card";
 import { useByVehicleType } from "../../../hooks/useTrafficData";
 import { useTrafficWindow } from "../../../hooks/useTrafficWindow";
 import { DistributionChart } from "../DistributionChart";
@@ -23,7 +24,8 @@ export function DistributionPanel({
   const isUpdating = country !== deferredCountry || isPlaceholderData;
 
   return (
-    <section
+    <Card
+      as="section"
       className="distribution-panel"
       aria-labelledby={`${selectId}-heading`}
     >
@@ -70,6 +72,6 @@ export function DistributionPanel({
       {data === undefined ? null : (
         <DistributionChart distribution={data.body} />
       )}
-    </section>
+    </Card>
   );
 }

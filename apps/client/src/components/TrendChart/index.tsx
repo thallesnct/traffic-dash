@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { Card } from "../Card";
 import { useTrend } from "../../hooks/useTrafficData";
 import { useTrafficWindow } from "../../hooks/useTrafficWindow";
 import { colorForCode } from "../../lib/colors";
@@ -31,18 +32,22 @@ export function TrendChart() {
 
   if (isPending)
     return (
-      <p>
-        Loading the amount of vehicles participating in traffic and its trend
-        over the last {labels[activeWindow]}…
-      </p>
+      <Card>
+        <p>
+          Loading the amount of vehicles participating in traffic and its trend
+          over the last {labels[activeWindow]}…
+        </p>
+      </Card>
     );
 
   if (isError)
     return (
-      <p role="alert">
-        Could not load data on the amount vehicles participating in traffic for
-        the last {labels[activeWindow]}: {error.message}
-      </p>
+      <Card>
+        <p role="alert">
+          Could not load data on the amount vehicles participating in traffic
+          for the last {labels[activeWindow]}: {error.message}
+        </p>
+      </Card>
     );
 
   const { dates, series, other } = data.body.data;
@@ -50,7 +55,9 @@ export function TrendChart() {
 
   if (visible.length === 0) {
     return (
-      <p>No vehicles participating traffic were recorded in this window.</p>
+      <Card>
+        <p>No vehicles participating traffic were recorded in this window.</p>
+      </Card>
     );
   }
 
@@ -63,35 +70,40 @@ export function TrendChart() {
   });
 
   return (
-    <section aria-labelledby="trend-heading">
-      <h2 id="trend-heading">Traffic trend</h2>
-      <ResponsiveContainer width="100%" height={320}>
-        <LineChart
-          data={rows}
-          margin={{ top: 8, right: 24, bottom: 0, left: 0 }}
-        >
-          <CartesianGrid horizontal vertical={false} />
-          <XAxis dataKey="date" />
-          <YAxis width={48} />
-          <Tooltip />
-          {visible.length > 1 ? <Legend /> : null}
-          {visible.map((item) => (
-            <Line
-              key={item.countryCode}
-              type="monotone"
-              dataKey={item.countryCode}
-              name={item.countryName}
-              stroke={colorForCode(item.countryCode)}
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
-            />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
-      {other === null ? null : (
-        <p>Other countries: {other.total.toLocaleString()}</p>
-      )}
-    </section>
+    <Card>
+      <section aria-labelledby="trend-heading">
+        <h2 id="trend-heading">Traffic trend</h2>
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart
+            data={rows}
+            margin={{ top: 8, right: 24, bottom: 0, left: 0 }}
+          >
+            <CartesianGrid horizontal vertical={false} />
+            <XAxis dataKey="date" />
+            <YAxis width={48} />
+            <Tooltip />
+            {visible.length > 1 ? <Legend /> : null}
+            {visible.map((item) => (
+              <Line
+                key={item.countryCode}
+                type="monotone"
+                dataKey={item.countryCode}
+                name={item.countryName}
+                stroke={colorForCode(item.countryCode)}
+                strokeWidth={2}
+                dot={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+        {other === null ? null : (
+          <p>
+            Countries not shown: {other.total.toLocaleString()} vehicles total
+            across the selected {labels[activeWindow]} reporting window.
+          </p>
+        )}
+      </section>
+    </Card>
   );
 }
