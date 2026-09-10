@@ -1,0 +1,84 @@
+import type { Window } from "@traffic-dashboard/shared";
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import { useTrend } from "../hooks/useTrafficData";
+import { colorForCode } from "../lib/colors";
+
+const VISIBLE_SERIES = 5;
+
+type TrendChartProps = {
+  window: Window;
+};
+
+type LabelObject = {
+  [key in Window]: string
+}
+
+const labels: LabelObject = {
+  '7d': '7 days',
+  '30d': '30 days',
+  '90d': '90 days'
+}
+
+export function TrendChart({ window }: TrendChartProps) {
+  const { data, isPending, isError, error } = useTrend(window);
+
+  if (isPending) return <p>Loading the amount of vehicles participating in traffic and it's trend over the last {labels[window]}…</p>;
+
+  if (isError) return <p role="alert">Could not load data on the amount vehicles participating in traffic for the last {labels[window]}: {error.message}</p>;
+
+  const { dates, series, other } = data.body.data;
+  const visible = series.slice(0, VISIBLE_SERIES);
+
+  if (visible.length === 0) return <p>No vehicles participating traffic were recorded in this window.</p>;
+
+  const rows = dates.map((date, index) => {
+    const row: Record<string, string | number> = { date };
+
+    for (const item of visible) row[item.countryCode] = item.points[index];
+
+    return row;
+  });
+
+  return (
+    <section aria-labelledby="trend-heading">
+      <h2 id="trend-heading">Traffic trend</h2>
+      <ResponsiveContainer width="100%" height={320}>
+        <LineChart
+          data={rows}
+          margin={{ top: 8, right: 24, bottom: 0, left: 0 }}
+        >
+          <CartesianGrid horizontal vertical={false} />
+          <XAxis dataKey="date" />
+          <YAxis width={48} />
+          <Tooltip />
+          {visible.length > 1 ? <Legend /> : null}
+          {visible.map((item) => (
+            <Line
+              key={item.countryCode}
+              type="monotone"
+              dataKey={item.countryCode}
+              name={item.countryName}
+              stroke={colorForCode(item.countryCode)}
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+      {other === null ? null : (
+        <p>Other countries: {other.total.toLocaleString()}</p>
+      )}
+    </section>
+  );
+}
