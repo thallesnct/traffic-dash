@@ -33,8 +33,12 @@ export {
 } from "./reporting/window";
 export { isoDateSchema, WINDOWS, windowSchema } from "./reporting/window";
 
-export { generationKey, responseKey } from "./cacheKeys";
-export { type CacheEndpoint, type ResponseKeyInput } from "./cacheKeys";
+export { cacheTierSchema, generationKey, responseKey } from "./cacheKeys";
+export {
+  type CacheEndpoint,
+  type CacheTier,
+  type ResponseKeyInput,
+} from "./cacheKeys";
 
 export {
   createUpsertTrafficParamsSchema,

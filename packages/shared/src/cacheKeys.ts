@@ -1,7 +1,13 @@
+import { z } from "zod";
+
 import type { Window } from "./reporting/window";
 import type { CountryCode } from "./resources/country";
 
 export type CacheEndpoint = "trend" | "by-country" | "by-vehicle-type";
+
+export const cacheTierSchema = z.enum(["hit", "miss"]);
+
+export type CacheTier = z.infer<typeof cacheTierSchema>;
 
 type BaseCacheKeyInput = {
   generation: number;

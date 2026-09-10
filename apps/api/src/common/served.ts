@@ -1,6 +1,5 @@
+import type { CacheTier } from "@traffic-dashboard/shared";
 import type { Response } from "express";
-
-export type CacheTier = "hit" | "miss";
 
 export type Served<TResponse> = { body: TResponse; cacheTier: CacheTier };
 
