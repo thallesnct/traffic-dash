@@ -10,6 +10,7 @@ import {
   type Window,
 } from "@traffic-dashboard/shared";
 
+import { UNCACHED, type Served } from "../common/served";
 import { CountriesService } from "../countries/countries.service";
 import { VehicleTypesService } from "../vehicle-types/vehicle-types.service";
 import {
@@ -21,12 +22,6 @@ import {
 import { TrafficRepository, type DailySeriesRow } from "./traffic.repository";
 
 const TREND_COUNTRY_LIMIT = 5;
-
-export type CacheTier = "hit" | "miss";
-
-export type Served<TResponse> = TResponse & { cacheTier: CacheTier };
-
-const UNCACHED = { cacheTier: "miss" } as const satisfies Served<unknown>;
 
 function toDailyCountryTotals(
   rows: readonly DailySeriesRow[],
@@ -79,7 +74,7 @@ export class TrafficService {
     );
 
     return {
-      ...toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window),
+      body: toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window),
       ...UNCACHED,
     };
   }
@@ -96,15 +91,13 @@ export class TrafficService {
     ]);
 
     return {
-      data: rows.map((row) => ({
-        countryCode: row.countryCode,
-        countryName: names.get(row.countryCode) ?? row.countryCode,
-        totalVehicles: row.total,
-      })),
-      meta: {
-        window,
-        through: endDate,
-        total: sumRowTotals(rows),
+      body: {
+        data: rows.map((row) => ({
+          countryCode: row.countryCode,
+          countryName: names.get(row.countryCode) ?? row.countryCode,
+          totalVehicles: row.total,
+        })),
+        meta: { window, through: endDate, total: sumRowTotals(rows) },
       },
       ...UNCACHED,
     };
@@ -126,12 +119,14 @@ export class TrafficService {
     const total = sumRowTotals(rows);
 
     return {
-      data: rows.map((row) => ({
-        vehicleType: row.vehicleType,
-        totalVehicles: row.total,
-        percentage: percentageOfTotal(row.total, total),
-      })),
-      meta: { window, through: endDate, total },
+      body: {
+        data: rows.map((row) => ({
+          vehicleType: row.vehicleType,
+          totalVehicles: row.total,
+          percentage: percentageOfTotal(row.total, total),
+        })),
+        meta: { window, through: endDate, total },
+      },
       ...UNCACHED,
     };
   }

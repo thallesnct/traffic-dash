@@ -1,0 +1,20 @@
+import type { Response } from "express";
+
+export type CacheTier = "hit" | "miss";
+
+export type Served<TResponse> = { body: TResponse; cacheTier: CacheTier };
+
+export const UNCACHED = { cacheTier: "miss" } as const satisfies {
+  cacheTier: CacheTier;
+};
+
+export function serveWithCacheHeaders<TResponse>(
+  served: Served<TResponse>,
+  response: Response,
+): TResponse {
+  response.setHeader("X-Cache", served.cacheTier);
+  response.setHeader("Vary", "Accept-Encoding");
+  response.setHeader("Cache-Control", "no-store");
+
+  return served.body;
+}

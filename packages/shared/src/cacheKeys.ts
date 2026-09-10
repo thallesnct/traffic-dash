@@ -21,7 +21,7 @@ export type ResponseKeyInput =
   AggregateCacheKeyInput | VehicleTypeCacheKeyInput;
 
 export function generationKey(): string {
-  return "traffic:v1:gen";
+  return "traffic:gen";
 }
 
 export function responseKey(input: ResponseKeyInput): string {
@@ -29,7 +29,7 @@ export function responseKey(input: ResponseKeyInput): string {
     throw new RangeError("Cache generation must be a nonnegative integer");
   }
 
-  const baseKey = `traffic:v1:${input.endpoint}:g${input.generation}:window-${input.window}`;
+  const baseKey = `traffic:${input.endpoint}:g${input.generation}:window-${input.window}`;
 
   if (input.endpoint === "by-vehicle-type" && input.country) {
     return `${baseKey}:country-${input.country}`;
