@@ -182,6 +182,9 @@ export class TrafficService {
       vehicleType,
       vehicleCount,
     );
+
+    await this.cache.bumpGeneration();
+
     const countryTotal = await this.repository.countryTotalOnDate(
       date,
       country,
