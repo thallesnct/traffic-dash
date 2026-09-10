@@ -32,7 +32,6 @@
     "@prisma/client": "^7.10.0",
     "@traffic-dashboard/shared": "*",
     "ioredis": "^6.0.0",
-    "lru-cache": "^5.1.1",
     "pg": "^8.16.3",
     "prisma": "^7.10.0",
     "pure-rand": "^6.1.0",

@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 
+import { CacheModule } from "../cache/cache.module";
 import { CountriesModule } from "../countries/countries.module";
 import { PrismaModule } from "../database/prisma.module";
 import { VehicleTypesModule } from "../vehicle-types/vehicle-types.module";
@@ -8,7 +9,7 @@ import { TrafficRepository } from "./traffic.repository";
 import { TrafficService } from "./traffic.service";
 
 @Module({
-  imports: [PrismaModule, CountriesModule, VehicleTypesModule],
+  imports: [PrismaModule, CacheModule, CountriesModule, VehicleTypesModule],
   controllers: [TrafficController],
   providers: [TrafficRepository, TrafficService],
   exports: [TrafficService],
