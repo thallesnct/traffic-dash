@@ -9,6 +9,7 @@ import {
   YAxis,
   type BarShapeProps,
 } from "recharts";
+import { useDeferredValue } from "react";
 
 import { Card } from "../Card";
 import { useByCountry } from "../../hooks/useTrafficData";
@@ -44,7 +45,8 @@ function CountryBarShape({
 
 export function CountryBarChart() {
   const { activeWindow } = useTrafficWindow();
-  const { data, isPending, isError, error } = useByCountry(activeWindow);
+  const deferredWindow = useDeferredValue(activeWindow);
+  const { data, isPending, isError, error } = useByCountry(deferredWindow);
 
   if (isPending) {
     return (
@@ -108,7 +110,7 @@ export function CountryBarChart() {
               layout="vertical"
               margin={{ top: 8, right: 24, bottom: 0, left: 0 }}
             >
-              <CartesianGrid horizontal={false} />
+              <CartesianGrid horizontal={false} stroke="var(--grid-line)" />
               <XAxis type="number" />
               <YAxis
                 type="category"

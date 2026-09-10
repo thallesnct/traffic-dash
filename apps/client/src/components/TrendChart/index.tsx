@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useDeferredValue } from "react";
 
 import { Card } from "../Card";
 import { useTrend } from "../../hooks/useTrafficData";
@@ -28,7 +29,8 @@ const labels: LabelObject = {
 
 export function TrendChart() {
   const { activeWindow } = useTrafficWindow();
-  const { data, isPending, isError, error } = useTrend(activeWindow);
+  const deferredWindow = useDeferredValue(activeWindow);
+  const { data, isPending, isError, error } = useTrend(deferredWindow);
 
   if (isPending)
     return (
@@ -78,7 +80,11 @@ export function TrendChart() {
             data={rows}
             margin={{ top: 8, right: 24, bottom: 0, left: 0 }}
           >
-            <CartesianGrid horizontal vertical={false} />
+            <CartesianGrid
+              horizontal
+              vertical={false}
+              stroke="var(--grid-line)"
+            />
             <XAxis dataKey="date" />
             <YAxis width={48} />
             <Tooltip />

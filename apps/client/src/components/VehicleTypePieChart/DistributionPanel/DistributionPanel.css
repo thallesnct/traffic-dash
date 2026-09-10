@@ -1,6 +1,8 @@
 /* DistributionPanel styles */
 .distribution-panel {
   flex: 1 1 0;
+  padding: 14px;
+  border-radius: 10px;
 }
 
 .distribution-panel__control {
@@ -50,7 +52,7 @@
 
 .distribution-panel__country-select select:focus-visible {
   outline: none;
-  border-color: var(--focus-ring);
+  border-color: var(--series-1);
   box-shadow: 0 0 0 3px var(--focus-ring-subtle);
 }
 

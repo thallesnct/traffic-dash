@@ -44,6 +44,7 @@ export function useTrend(window: Window) {
     queryKey: trafficQueryKeys.trend(window),
     queryFn: () => fetchTrend(window),
     staleTime: STALE_TIME_MS,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -52,6 +53,7 @@ export function useByCountry(window: Window) {
     queryKey: trafficQueryKeys.byCountry(window),
     queryFn: () => fetchByCountry(window),
     staleTime: STALE_TIME_MS,
+    placeholderData: keepPreviousData,
   });
 }
 
