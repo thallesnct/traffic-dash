@@ -7,3 +7,23 @@
 .app > :not(:first-child) {
   margin-top: 48px;
 }
+
+.app > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 0;
+  margin-bottom: 24px;
+  background: var(--surface);
+}
+
+.app h1 {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 600;
+}

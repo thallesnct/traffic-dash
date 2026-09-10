@@ -1,0 +1,47 @@
+.record-traffic-form {
+  display: grid;
+  grid-template-columns:
+    minmax(150px, 0.8fr) minmax(220px, 1.4fr) minmax(150px, 0.9fr)
+    minmax(110px, 0.6fr) auto;
+  gap: 16px;
+}
+
+.record-traffic-form button {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.record-traffic-form button:focus-visible {
+  outline: 3px solid var(--focus-ring-emphasis);
+  outline-offset: 2px;
+}
+
+.record-traffic-form button {
+  justify-self: start;
+  border-color: var(--series-1);
+  background: var(--series-1);
+  color: var(--text-inverse);
+  cursor: pointer;
+}
+
+.record-traffic-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 800px) {
+  .record-traffic-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .record-traffic-form {
+    grid-template-columns: 1fr;
+  }
+}

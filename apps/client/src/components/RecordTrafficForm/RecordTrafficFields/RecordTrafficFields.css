@@ -1,0 +1,28 @@
+.record-traffic-fields {
+  display: contents;
+}
+
+.record-traffic-fields label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.record-traffic-fields input,
+.record-traffic-fields select {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.record-traffic-fields input:focus-visible,
+.record-traffic-fields select:focus-visible {
+  outline: 3px solid var(--focus-ring-emphasis);
+  outline-offset: 2px;
+}
