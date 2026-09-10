@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { fromIsoDate, type IsoDate } from "@traffic-dashboard/shared";
 
+import type { DailyTraffic } from "../generated/prisma/client";
 import { PrismaService } from "../database/prisma.service";
 
 export type DailySeriesRow = {
@@ -21,6 +22,16 @@ export type VehicleTypeTotalRow = {
 
 function dateRange(from: IsoDate, to: IsoDate): { gte: Date; lte: Date } {
   return { gte: fromIsoDate(from), lte: fromIsoDate(to) };
+}
+
+function naturalKey(date: IsoDate, country: string, type: string) {
+  return {
+    recordedDate_countryCode_vehicleType: {
+      recordedDate: fromIsoDate(date),
+      countryCode: country,
+      vehicleType: type,
+    },
+  };
 }
 
 @Injectable()
@@ -89,5 +100,45 @@ export class TrafficRepository {
     });
 
     return result._sum.vehicleCount ?? 0;
+  }
+
+  async find(
+    date: IsoDate,
+    country: string,
+    type: string,
+  ): Promise<DailyTraffic | null> {
+    return this.prisma.dailyTraffic.findUnique({
+      where: naturalKey(date, country, type),
+    });
+  }
+
+  async upsert(
+    date: IsoDate,
+    country: string,
+    type: string,
+    count: number,
+  ): Promise<DailyTraffic> {
+    return this.prisma.dailyTraffic.upsert({
+      where: naturalKey(date, country, type),
+      create: {
+        recordedDate: fromIsoDate(date),
+        countryCode: country,
+        vehicleType: type,
+        vehicleCount: count,
+      },
+      update: { vehicleCount: count },
+    });
+  }
+
+  async delete(date: IsoDate, country: string, type: string): Promise<number> {
+    const result = await this.prisma.dailyTraffic.deleteMany({
+      where: {
+        recordedDate: fromIsoDate(date),
+        countryCode: country,
+        vehicleType: type,
+      },
+    });
+
+    return result.count;
   }
 }

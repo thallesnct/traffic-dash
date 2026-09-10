@@ -12,11 +12,12 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf dist",
-    "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
     "dev": "tsc -p tsconfig.json --watch",
-    "test": "vitest run"
+    "prebuild": "npm run clean",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "keywords": [],
   "author": "Thalles Nascimento Carvalho <thallesnct>",
