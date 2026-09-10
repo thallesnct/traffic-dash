@@ -1,0 +1,9 @@
+/* DistributionTooltip styles */
+.distribution-tooltip {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  box-shadow: 0 8px 20px var(--shadow-tooltip);
+}

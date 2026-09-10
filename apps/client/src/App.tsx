@@ -1,5 +1,6 @@
 import { CountryBarChart } from "./components/CountryBarChart";
 import { TrendChart } from "./components/TrendChart";
+import { VehicleTypePieChart } from "./components/VehicleTypePieChart";
 import { WindowSwitcher } from "./components/WindowSwitcher";
 import { TrafficWindowProvider } from "./contexts/TrafficWindowContext";
 import "./App.css";
@@ -14,6 +15,7 @@ export default function App() {
         </header>
         <TrendChart />
         <CountryBarChart />
+        <VehicleTypePieChart />
       </main>
     </TrafficWindowProvider>
   );

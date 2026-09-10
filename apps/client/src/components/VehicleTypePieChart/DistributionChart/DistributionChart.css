@@ -1,0 +1,11 @@
+/* DistributionChart styles */
+.distribution-chart__total {
+  margin: 0;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.distribution-chart__render,
+.distribution-chart__render .recharts-wrapper {
+  padding-bottom: 48px;
+}

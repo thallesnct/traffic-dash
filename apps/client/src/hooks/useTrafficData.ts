@@ -1,5 +1,10 @@
 import type { CountryCode, Window } from "@traffic-dashboard/shared";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import {
   fetchByCountry,
@@ -55,6 +60,7 @@ export function useByVehicleType(window: Window, country?: CountryCode) {
     queryKey: trafficQueryKeys.byVehicleType(window, country),
     queryFn: () => fetchByVehicleType(window, country),
     staleTime: STALE_TIME_MS,
+    placeholderData: keepPreviousData,
   });
 }
 

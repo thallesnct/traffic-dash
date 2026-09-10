@@ -3,3 +3,7 @@
   margin: 0 auto;
   padding: 24px 20px 60px;
 }
+
+.app > :not(:first-child) {
+  margin-top: 48px;
+}
