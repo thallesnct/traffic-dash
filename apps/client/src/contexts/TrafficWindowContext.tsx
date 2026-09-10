@@ -13,6 +13,7 @@ export function TrafficWindowProvider({ children }: { children: ReactNode }) {
     (window: TrafficWindowContextValue["activeWindow"]) => {
       void navigate({
         search: (previous) => ({ ...previous, window }),
+        resetScroll: false,
       });
     },
     [navigate],
