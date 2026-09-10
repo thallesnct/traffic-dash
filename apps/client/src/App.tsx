@@ -1,5 +1,6 @@
-import { WINDOWS } from "@traffic-dashboard/shared";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+
+import { WindowSwitcher } from "./components/WindowSwitcher";
 
 export default function App() {
   const { window: activeWindow } = useSearch({ from: "/" });
@@ -9,22 +10,12 @@ export default function App() {
     <main>
       <header>
         <h1>Traffic Insights</h1>
-        <nav aria-label="Reporting window">
-          {WINDOWS.map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={option === activeWindow}
-              onClick={() =>
-                navigate({
-                  search: (previous) => ({ ...previous, window: option }),
-                })
-              }
-            >
-              {option}
-            </button>
-          ))}
-        </nav>
+        <WindowSwitcher
+          value={activeWindow}
+          onChange={(next) =>
+            navigate({ search: (previous) => ({ ...previous, window: next }) })
+          }
+        />
       </header>
     </main>
   );
