@@ -14,6 +14,9 @@ dist
 !.env.example
 **/.env
 
+# Prisma files
+**/**/generated
+
 # TS related files
 *.tsbuildinfo
 
@@ -21,3 +24,5 @@ dist
 coverage/
 playwright-report/
 test-results/
+
+/apps/client/
