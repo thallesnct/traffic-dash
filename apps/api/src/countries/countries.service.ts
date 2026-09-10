@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import type { CountriesResponse } from "@traffic-dashboard/shared";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import type { CountriesResponse, CountryCode } from "@traffic-dashboard/shared";
 import { PrismaService } from "../database/prisma.service";
 
 @Injectable()
@@ -13,5 +13,15 @@ export class CountriesService {
     });
 
     return { data: countries };
+  }
+
+  async assertExists(code: CountryCode): Promise<void> {
+    const country = await this.prisma.country.findUnique({
+      where: { code },
+      select: { code: true },
+    });
+
+    if (!country)
+      throw new BadRequestException(`Unknown country code: ${code}`);
   }
 }
