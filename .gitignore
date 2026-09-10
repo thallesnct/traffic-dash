@@ -16,6 +16,7 @@ dist
 
 # Prisma files
 **/**/generated
+**/**/migrations
 
 # TS related files
 *.tsbuildinfo
