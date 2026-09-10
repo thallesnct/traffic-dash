@@ -1,11 +1,14 @@
-import { Controller, Get, Query, Res } from "@nestjs/common";
+import { Body, Controller, Get, Param, Put, Query, Res } from "@nestjs/common";
 import {
   byCountryQuerySchema,
   byVehicleTypeQuerySchema,
+  createUpsertTrafficParamsSchema,
   trendQuerySchema,
+  upsertTrafficSchema,
   type ByCountryResponse,
   type ByVehicleTypeResponse,
   type TrendResponse,
+  type UpsertTrafficResponse,
 } from "@traffic-dashboard/shared";
 import type { Response } from "express";
 
@@ -54,5 +57,24 @@ export class TrafficController {
       await this.traffic.getByVehicleType(window, country),
       response,
     );
+  }
+
+  @Put(":date/:country/:vehicleType")
+  async upsert(
+    @Param() params: unknown,
+    @Body() body: unknown,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<UpsertTrafficResponse> {
+    const { date, country, vehicleType } = parseOrBadRequest(
+      createUpsertTrafficParamsSchema(),
+      params,
+    );
+    const { vehicleCount } = parseOrBadRequest(upsertTrafficSchema, body);
+
+    response.setHeader("Cache-Control", "no-store");
+
+    return {
+      data: await this.traffic.upsert(date, country, vehicleType, vehicleCount),
+    };
   }
 }

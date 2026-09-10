@@ -6,7 +6,10 @@ import {
   type ByCountryResponse,
   type ByVehicleTypeResponse,
   type CountryCode,
+  type IsoDate,
   type TrendResponse,
+  type UpsertTrafficResponse,
+  type VehicleTypeCode,
   type Window,
 } from "@traffic-dashboard/shared";
 
@@ -22,6 +25,8 @@ import {
 import { TrafficRepository, type DailySeriesRow } from "./traffic.repository";
 
 const TREND_COUNTRY_LIMIT = 5;
+
+export type UpsertedTraffic = UpsertTrafficResponse["data"];
 
 function toDailyCountryTotals(
   rows: readonly DailySeriesRow[],
@@ -128,6 +133,40 @@ export class TrafficService {
         meta: { window, through: endDate, total },
       },
       ...UNCACHED,
+    };
+  }
+
+  async upsert(
+    date: IsoDate,
+    country: CountryCode,
+    vehicleType: VehicleTypeCode,
+    vehicleCount: number,
+  ): Promise<UpsertedTraffic> {
+    await Promise.all([
+      this.countries.assertExists(country),
+      this.vehicleTypes.assertExists(vehicleType),
+    ]);
+
+    const previous = await this.repository.find(date, country, vehicleType);
+    const record = await this.repository.upsert(
+      date,
+      country,
+      vehicleType,
+      vehicleCount,
+    );
+    const countryTotal = await this.repository.countryTotalOnDate(
+      date,
+      country,
+    );
+
+    return {
+      recordedDate: toIsoDate(record.recordedDate),
+      countryCode: record.countryCode,
+      vehicleType: record.vehicleType,
+      vehicleCount: record.vehicleCount,
+      countryTotal,
+      operation: previous === null ? "created" : "updated",
+      previousVehicleCount: previous?.vehicleCount ?? null,
     };
   }
 }
