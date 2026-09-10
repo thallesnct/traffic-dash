@@ -16,6 +16,15 @@ export function toIsoDate(date: Date): IsoDate {
   return date.toISOString().substring(0, 10);
 }
 
+export const isoDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine((value) => {
+    const date = new Date(`${value}T00:00:00.000Z`);
+
+    return !Number.isNaN(date.getTime()) && toIsoDate(date) === value;
+  }, "Invalid ISO date");
+
 export type WindowResult = {
   startDate: IsoDate;
   endDate: IsoDate;

@@ -1,6 +1,11 @@
 import { describe, it, expect } from "vitest";
 
-import { resolveWindow, resolvePreviousWindow, toIsoDate } from "./window";
+import {
+  isoDateSchema,
+  resolveWindow,
+  resolvePreviousWindow,
+  toIsoDate,
+} from "./window";
 
 describe("toIsoDate", () => {
   it("resolves the correct date", () => {
@@ -9,6 +14,15 @@ describe("toIsoDate", () => {
 
     expect(isoDate).toBe("2026-09-10");
   });
+});
+
+describe("isoDateSchema", () => {
+  it.each(["2026-02-30", "2026-2-03", "2026-02-3", "not-a-date"])(
+    'rejects invalid "%s"',
+    (value) => {
+      expect(isoDateSchema.safeParse(value).success).toBe(false);
+    },
+  );
 });
 
 describe("resolveWindow", () => {
