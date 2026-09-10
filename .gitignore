@@ -1,0 +1,23 @@
+.git
+.DS_Store
+
+node_modules
+**/node_modules
+
+# Build targets - Both frontend and backend build to ./dist
+dist
+**/dist
+
+# Environment files
+.env
+.env.*
+!.env.example
+**/.env
+
+# TS related files
+*.tsbuildinfo
+
+# Test related files
+coverage/
+playwright-report/
+test-results/
