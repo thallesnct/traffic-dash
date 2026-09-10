@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 
+import { CountryBarChart } from "./components/CountryBarChart";
 import { TrendChart } from "./components/TrendChart";
 import { WindowSwitcher } from "./components/WindowSwitcher";
 
@@ -19,6 +20,7 @@ export default function App() {
         />
       </header>
       <TrendChart window={activeWindow} />
+      <CountryBarChart window={activeWindow} />
     </main>
   );
 }
