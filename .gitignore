@@ -24,5 +24,3 @@ dist
 coverage/
 playwright-report/
 test-results/
-
-/apps/client/
