@@ -45,6 +45,12 @@ export function buildDateAxis(startDate: IsoDate, endDate: IsoDate): IsoDate[] {
   return dates;
 }
 
+export function percentageOfTotal(part: number, whole: number): number {
+  if (whole === 0) return 0;
+
+  return Math.round((1000 * part) / whole) / 10;
+}
+
 export function percentageChange({
   current,
   previous,
