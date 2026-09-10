@@ -1,4 +1,3 @@
-import type { Window } from "@traffic-dashboard/shared";
 import {
   CartesianGrid,
   Legend,
@@ -11,35 +10,48 @@ import {
 } from "recharts";
 
 import { useTrend } from "../hooks/useTrafficData";
+import { useTrafficWindow } from "../hooks/useTrafficWindow";
 import { colorForCode } from "../lib/colors";
 
 const VISIBLE_SERIES = 5;
 
-type TrendChartProps = {
-  window: Window;
+type LabelObject = {
+  [key in "7d" | "30d" | "90d"]: string;
 };
 
-type LabelObject = {
-  [key in Window]: string
-}
-
 const labels: LabelObject = {
-  '7d': '7 days',
-  '30d': '30 days',
-  '90d': '90 days'
-}
+  "7d": "7 days",
+  "30d": "30 days",
+  "90d": "90 days",
+};
 
-export function TrendChart({ window }: TrendChartProps) {
-  const { data, isPending, isError, error } = useTrend(window);
+export function TrendChart() {
+  const { activeWindow } = useTrafficWindow();
+  const { data, isPending, isError, error } = useTrend(activeWindow);
 
-  if (isPending) return <p>Loading the amount of vehicles participating in traffic and it's trend over the last {labels[window]}…</p>;
+  if (isPending)
+    return (
+      <p>
+        Loading the amount of vehicles participating in traffic and its trend
+        over the last {labels[activeWindow]}…
+      </p>
+    );
 
-  if (isError) return <p role="alert">Could not load data on the amount vehicles participating in traffic for the last {labels[window]}: {error.message}</p>;
+  if (isError)
+    return (
+      <p role="alert">
+        Could not load data on the amount vehicles participating in traffic for
+        the last {labels[activeWindow]}: {error.message}
+      </p>
+    );
 
   const { dates, series, other } = data.body.data;
   const visible = series.slice(0, VISIBLE_SERIES);
 
-  if (visible.length === 0) return <p>No vehicles participating traffic were recorded in this window.</p>;
+  if (visible.length === 0)
+    return (
+      <p>No vehicles participating traffic were recorded in this window.</p>
+    );
 
   const rows = dates.map((date, index) => {
     const row: Record<string, string | number> = { date };

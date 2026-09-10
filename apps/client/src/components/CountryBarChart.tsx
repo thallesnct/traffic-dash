@@ -1,4 +1,3 @@
-import type { Window } from "@traffic-dashboard/shared";
 import {
   Bar,
   BarChart,
@@ -12,15 +11,12 @@ import {
 } from "recharts";
 
 import { useByCountry } from "../hooks/useTrafficData";
+import { useTrafficWindow } from "../hooks/useTrafficWindow";
 import { SERIES_COLORS } from "../lib/colors";
 
 const COUNTRY_ROW_HEIGHT = 30;
 const MIN_CHART_HEIGHT = 340;
 const CHART_VIEWPORT_HEIGHT = 520;
-
-type CountryBarChartProps = {
-  window: Window;
-};
 
 function barOpacity(index: number, total: number): number {
   if (total <= 1) return 1;
@@ -43,13 +39,16 @@ function CountryBarShape({
   );
 }
 
-export function CountryBarChart({ window }: CountryBarChartProps) {
-  const { data, isPending, isError, error } = useByCountry(window);
+export function CountryBarChart() {
+  const { activeWindow } = useTrafficWindow();
+  const { data, isPending, isError, error } = useByCountry(activeWindow);
 
   if (isPending) {
     return (
       <section aria-labelledby="country-traffic-heading">
-        <h2 id="country-traffic-heading">Country-wise amount of vehicles in traffic</h2>
+        <h2 id="country-traffic-heading">
+          Country-wise amount of vehicles in traffic
+        </h2>
         <p>Loading country totals…</p>
       </section>
     );
@@ -58,7 +57,9 @@ export function CountryBarChart({ window }: CountryBarChartProps) {
   if (isError) {
     return (
       <section aria-labelledby="country-traffic-heading">
-        <h2 id="country-traffic-heading">Country-wise amount of vehicles in traffic</h2>
+        <h2 id="country-traffic-heading">
+          Country-wise amount of vehicles in traffic
+        </h2>
         <p role="alert">Could not load country totals: {error.message}</p>
       </section>
     );
@@ -69,7 +70,9 @@ export function CountryBarChart({ window }: CountryBarChartProps) {
   if (countries.length === 0) {
     return (
       <section aria-labelledby="country-traffic-heading">
-        <h2 id="country-traffic-heading">Country-wise amount of vehicles in traffic</h2>
+        <h2 id="country-traffic-heading">
+          Country-wise amount of vehicles in traffic
+        </h2>
         <p>No country traffic was recorded in this window.</p>
       </section>
     );
