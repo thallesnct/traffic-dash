@@ -62,8 +62,12 @@ export async function fetchVehicleTypes(): Promise<VehicleTypesResponse> {
 
 export async function fetchTrend(
   window: Window,
+  countries?: readonly CountryCode[],
 ): Promise<Fetched<TrendResponse>> {
   const query = new URLSearchParams({ window });
+
+  if (countries !== undefined && countries.length > 0)
+    query.set("countries", countries.join(","));
 
   return getJson(`/api/traffic/trend?${query.toString()}`, trendResponseSchema);
 }

@@ -5,57 +5,6 @@
   border-radius: 10px;
 }
 
-.distribution-panel__control {
-  display: grid;
-  gap: 6px;
-}
-
-.distribution-panel__control label {
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.distribution-panel__country-select {
-  position: relative;
-}
-
-.distribution-panel__country-select::after {
-  position: absolute;
-  top: 50%;
-  right: 12px;
-  content: "⌄";
-  color: var(--text-secondary);
-  pointer-events: none;
-  transform: translateY(-56%);
-}
-
-.distribution-panel__country-select select {
-  width: 100%;
-  appearance: none;
-  padding: 10px 38px 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-raised);
-  color: var(--text-primary);
-  font: inherit;
-  line-height: 1.25;
-  cursor: pointer;
-  transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease;
-}
-
-.distribution-panel__country-select select:hover {
-  border-color: var(--border-hover);
-}
-
-.distribution-panel__country-select select:focus-visible {
-  outline: none;
-  border-color: var(--series-1);
-  box-shadow: 0 0 0 3px var(--focus-ring-subtle);
-}
-
 .distribution-panel__heading {
   margin: 18px 0 2px;
   font-size: 1.125rem;

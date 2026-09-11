@@ -1,6 +1,7 @@
 import { useDeferredValue } from "react";
 
 import { Card } from "../../Card";
+import { Select } from "../../Select";
 import { useByVehicleType } from "../../../hooks/useTrafficData";
 import { useTrafficWindow } from "../../../hooks/useTrafficWindow";
 import { DistributionChart } from "../DistributionChart";
@@ -29,28 +30,17 @@ export function DistributionPanel({
       className="distribution-panel"
       aria-labelledby={`${selectId}-heading`}
     >
-      <div className="distribution-panel__control">
-        <label htmlFor={selectId}>{selectLabel}</label>
-        <div className="distribution-panel__country-select">
-          <select
-            id={selectId}
-            value={country}
-            onChange={(event) =>
-              onCountryChange(event.target.value as typeof country)
-            }
-          >
-            {countries.map((option) => (
-              <option
-                key={option.code}
-                value={option.code}
-                disabled={option.code === otherCountry}
-              >
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <Select
+        id={selectId}
+        label={selectLabel}
+        value={country}
+        options={countries.map((option) => ({
+          value: option.code,
+          label: option.name,
+          disabled: option.code === otherCountry,
+        }))}
+        onChange={(value) => onCountryChange(value as typeof country)}
+      />
       <h3 className="distribution-panel__heading" id={`${selectId}-heading`}>
         {name}
       </h3>

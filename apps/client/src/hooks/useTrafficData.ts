@@ -23,7 +23,8 @@ const BY_COUNTRY = "by-country";
 const BY_VEHICLE_TYPE = "by-vehicle-type";
 
 export const trafficQueryKeys = {
-  trend: (window: Window) => [TREND, window] as const,
+  trend: (window: Window, countries?: readonly CountryCode[]) =>
+    [TREND, window, countries ?? null] as const,
   byCountry: (window: Window) => [BY_COUNTRY, window] as const,
   byVehicleType: (window: Window, country?: CountryCode) =>
     [BY_VEHICLE_TYPE, window, country] as const,
@@ -39,10 +40,10 @@ export function useVehicleTypes() {
   return useQuery({ queryKey: ["vehicle-types"], queryFn: fetchVehicleTypes });
 }
 
-export function useTrend(window: Window) {
+export function useTrend(window: Window, countries?: readonly CountryCode[]) {
   return useQuery({
-    queryKey: trafficQueryKeys.trend(window),
-    queryFn: () => fetchTrend(window),
+    queryKey: trafficQueryKeys.trend(window, countries),
+    queryFn: () => fetchTrend(window, countries),
     staleTime: STALE_TIME_MS,
     placeholderData: keepPreviousData,
   });

@@ -1,0 +1,16 @@
+.delta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.delta-badge[data-delta="up"] {
+  color: var(--delta-up);
+}
+
+.delta-badge[data-delta="down"] {
+  color: var(--delta-down);
+}

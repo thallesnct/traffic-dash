@@ -1,0 +1,56 @@
+.select-field {
+  display: grid;
+  gap: 6px;
+}
+
+.select-field label {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.select-field__control {
+  position: relative;
+}
+
+.select-field__control::after {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  content: "⌄";
+  color: var(--text-secondary);
+  pointer-events: none;
+  transform: translateY(-56%);
+}
+
+.select-field__control select {
+  width: 100%;
+  appearance: none;
+  padding: 10px 38px 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: inherit;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.select-field__control select:disabled {
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.select-field__control select:hover:not(:disabled) {
+  border-color: var(--border-hover);
+}
+
+.select-field__control select:focus-visible {
+  outline: none;
+  border-color: var(--series-1);
+  box-shadow: 0 0 0 3px var(--focus-ring-subtle);
+}

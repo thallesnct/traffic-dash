@@ -1,0 +1,80 @@
+.data-list {
+  display: flex;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.data-list__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.data-list__mark {
+  flex: none;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 3px;
+}
+
+.data-list__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-list--rows {
+  flex-direction: column;
+  gap: 6px;
+}
+
+.data-list--rows .data-list__item {
+  justify-content: flex-start;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 0.875rem;
+}
+
+.data-list--rows .data-list__value {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-list--chips {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.data-list--chips .data-list__item {
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+}
+
+.data-list--chips button {
+  padding: 0 2px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.data-list--chips button:hover {
+  color: var(--text-primary);
+}
+
+.data-list--chips button:focus-visible {
+  outline: 2px solid var(--series-1);
+  outline-offset: 2px;
+}
