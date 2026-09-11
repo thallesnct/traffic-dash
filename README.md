@@ -10,9 +10,9 @@ packages/shared Zod schemas and calendar helpers, consumed by both
 
 ## Requirements
 
-| Tool | Version used |
-|---|---|
-| Node | 24.x (npm workspaces) |
+| Tool   | Version used                              |
+| ------ | ----------------------------------------- |
+| Node   | 24.x (npm workspaces)                     |
 | Docker | with Compose v2, for PostgreSQL and Redis |
 
 ## Setup
@@ -54,15 +54,15 @@ curl 'http://localhost:3333/api/traffic/trend?window=7d'
 
 ## API
 
-| Method | Path | Notes |
-|---|---|---|
-| GET | `/health` | process liveness and uptime; touches no datastore |
-| GET | `/ready` | readiness; runs `SELECT 1` through Prisma |
-| GET | `/countries` | catalog, database-backed |
-| GET | `/vehicle-types` | catalog, database-backed |
-| GET | `/api/traffic/trend` | `?window=7d\|30d\|90d`, busiest five countries plus an `other` summary |
-| GET | `/api/traffic/by-country` | `?window=…`, every country, descending by total |
-| GET | `/api/traffic/by-vehicle-type` | `?window=…&country=XX`, `country` optional |
+| Method | Path                           | Notes                                                                  |
+| ------ | ------------------------------ | ---------------------------------------------------------------------- |
+| GET    | `/health`                      | process liveness and uptime; touches no datastore                      |
+| GET    | `/ready`                       | readiness; runs `SELECT 1` through Prisma                              |
+| GET    | `/countries`                   | catalog, database-backed                                               |
+| GET    | `/vehicle-types`               | catalog, database-backed                                               |
+| GET    | `/api/traffic/trend`           | `?window=7d\|30d\|90d`, busiest five countries plus an `other` summary |
+| GET    | `/api/traffic/by-country`      | `?window=…`, every country, descending by total                        |
+| GET    | `/api/traffic/by-vehicle-type` | `?window=…&country=XX`, `country` optional                             |
 
 `window` defaults to `30d`. The query schemas are strict, so an unrecognised parameter is a 400,
 as is an unknown `country`. Aggregate responses carry `X-Cache`, `Vary: Accept-Encoding` and
@@ -70,7 +70,7 @@ as is an unknown `country`. Aggregate responses carry `X-Cache`, `Vary: Accept-E
 
 ## Client
 
-```bash
+````bash
 npm run dev:client
 npm run build -w apps/client
 npm run preview -w apps/client
@@ -92,13 +92,13 @@ docker compose run --rm api npm run seed:prod
 docker compose ps
 curl -i http://localhost:5174/api/traffic/trend?window=30d # if you want to check the API
 open http://localhost:5174 # to check the client side app
-```
+````
 
-| Service | Host URL | Notes |
-|---|---|---|
-| web | `http://localhost:5174` | nginx serves the client and proxies `/api/`, `/countries`, `/vehicle-types`, `/health` and `/ready` to the api container |
-| api | `http://localhost:3333` | the same port the host API uses too, so only one of them can run |
-| postgres, redis | 5432, 6379 | the same containers the host workflow already uses |
+| Service         | Host URL                | Notes                                                                                                                    |
+| --------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| web             | `http://localhost:5174` | nginx serves the client and proxies `/api/`, `/countries`, `/vehicle-types`, `/health` and `/ready` to the api container |
+| api             | `http://localhost:3333` | the same port the host API uses too, so only one of them can run                                                         |
+| postgres, redis | 5432, 6379              | the same containers the host workflow already uses                                                                       |
 
 ## Checks
 
@@ -133,7 +133,7 @@ Reads are cached in Redis for 60 seconds, and every write bumps a generation cou
 At 5 RPS nothing needs changing. Each key is rebuilt at most once a minute and everything else should come down to a Redis lookup.
 
 At 50 RPS two problems could show up. When a key expires, every request that arrives during the rebuild runs the same query, so the cache needs a lock that lets one request do the work while the rest
-wait. 
+wait.
 
 And a single Node process only uses one core, so one possible option would be to run a few API replicas behind nginx (could leverage existing dockerization for that), as they hold no state and share the same Redis instance/endpoint. It would also be worth making a write invalidate only the country it touched rather than the whole cache as it currently does.
 

@@ -7,7 +7,9 @@ type DistributionLegendProps = {
   data: readonly VehicleDistribution[];
 };
 
-export function DistributionLegend({ data }: DistributionLegendProps): React.JSX.Element {
+export function DistributionLegend({
+  data,
+}: DistributionLegendProps): React.JSX.Element {
   return (
     <ul className="distribution-legend" aria-label="Vehicle type legend">
       {data.map((vehicle) => (

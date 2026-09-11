@@ -30,7 +30,7 @@ export function RecordTrafficForm() {
   const countriesQuery = useCountries();
   const vehicleTypesQuery = useVehicleTypes();
   const mutation = useUpsertTraffic();
-  
+
   const today = toIsoDate(new Date());
   const isValidDate = isoDateSchema.safeParse(date).success && date <= today;
   const isFormValid =
