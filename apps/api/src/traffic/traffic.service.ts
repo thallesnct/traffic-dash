@@ -22,6 +22,7 @@ import {
   buildCountryTrends,
   percentageOfTotal,
   toBusiestCountriesResponse,
+  toChosenCountriesResponse,
   type DailyCountryTotal,
 } from "./traffic.calculations";
 import { TrafficRepository, type DailySeriesRow } from "./traffic.repository";
@@ -60,13 +61,18 @@ export class TrafficService {
     return new Map(data.map(({ code, name }) => [code, name]));
   }
 
-  async getTrend(window: Window): Promise<Served<TrendResponse>> {
+  async getTrend(
+    window: Window,
+    countries?: readonly CountryCode[],
+  ): Promise<Served<TrendResponse>> {
+    if (countries !== undefined) await this.countries.assertAllExist(countries);
+
     const generation = await this.cache.getGeneration();
 
     return this.cache.getOrSetJson(
-      responseKey({ endpoint: "trend", generation, window }),
+      responseKey({ endpoint: "trend", generation, window, countries }),
       RESPONSE_TTL_SECONDS,
-      () => this.getTrendUncached(window),
+      () => this.getTrendUncached(window, countries),
     );
   }
 
@@ -95,7 +101,11 @@ export class TrafficService {
     );
   }
 
-  async getTrendUncached(window: Window, now?: Date): Promise<TrendResponse> {
+  async getTrendUncached(
+    window: Window,
+    countries?: readonly CountryCode[],
+    now?: Date,
+  ): Promise<TrendResponse> {
     const clock = now ?? new Date();
     const current = resolveWindow(window, clock);
     const previous = resolvePreviousWindow(window, clock);
@@ -117,7 +127,10 @@ export class TrafficService {
       names,
     );
 
-    return toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window);
+    if (countries === undefined)
+      return toBusiestCountriesResponse(trends, TREND_COUNTRY_LIMIT, window);
+
+    return toChosenCountriesResponse(trends, new Set(countries), window);
   }
 
   async getByCountryUncached(

@@ -53,6 +53,7 @@ export {
   byCountryQuerySchema,
   byVehicleTypeQuerySchema,
   trendQuerySchema,
+  MAX_TREND_COUNTRIES,
 } from "./traffic/query";
 export {
   type ByCountryQuery,

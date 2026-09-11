@@ -14,8 +14,13 @@ type BaseCacheKeyInput = {
   window: Window;
 };
 
-type AggregateCacheKeyInput = BaseCacheKeyInput & {
-  endpoint: Exclude<CacheEndpoint, "by-vehicle-type">;
+type TrendCacheKeyInput = BaseCacheKeyInput & {
+  endpoint: Extract<CacheEndpoint, "trend">;
+  countries?: readonly CountryCode[];
+};
+
+type CountryCacheKeyInput = BaseCacheKeyInput & {
+  endpoint: Extract<CacheEndpoint, "by-country">;
 };
 
 type VehicleTypeCacheKeyInput = BaseCacheKeyInput & {
@@ -24,7 +29,7 @@ type VehicleTypeCacheKeyInput = BaseCacheKeyInput & {
 };
 
 export type ResponseKeyInput =
-  AggregateCacheKeyInput | VehicleTypeCacheKeyInput;
+  TrendCacheKeyInput | CountryCacheKeyInput | VehicleTypeCacheKeyInput;
 
 export function generationKey(): string {
   return "traffic:gen";
@@ -39,6 +44,10 @@ export function responseKey(input: ResponseKeyInput): string {
 
   if (input.endpoint === "by-vehicle-type" && input.country) {
     return `${baseKey}:country-${input.country}`;
+  }
+
+  if (input.endpoint === "trend" && input.countries?.length) {
+    return `${baseKey}:countries-${[...new Set(input.countries)].sort().join("_")}`;
   }
 
   return baseKey;

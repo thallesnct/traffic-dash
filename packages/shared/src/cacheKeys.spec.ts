@@ -45,6 +45,25 @@ describe("Cache keys", () => {
     ).toBe("traffic:by-vehicle-type:g2:window-30d:country-BR");
   });
 
+  it("adds a sorted country list only to the trend key", () => {
+    const base = {
+      endpoint: "trend" as const,
+      generation: 3,
+      window: "7d" as const,
+    };
+
+    expect(responseKey({ ...base, countries: ["US", "BR"] })).toBe(
+      "traffic:trend:g3:window-7d:countries-BR_US",
+    );
+    expect(responseKey({ ...base, countries: ["BR", "US"] })).toBe(
+      responseKey({ ...base, countries: ["US", "BR"] }),
+    );
+    expect(responseKey({ ...base, countries: [] })).toBe(responseKey(base));
+    expect(responseKey({ ...base, countries: ["JP"] })).not.toBe(
+      responseKey(base),
+    );
+  });
+
   it("rejects an invalid generation", () => {
     for (const generation of [-1, 1.5]) {
       expect(() =>

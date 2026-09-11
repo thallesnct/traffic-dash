@@ -25,9 +25,12 @@ export class TrafficController {
     @Query() query: unknown,
     @Res({ passthrough: true }) response: Response,
   ): Promise<TrendResponse> {
-    const { window } = parseOrBadRequest(trendQuerySchema, query);
+    const { window, countries } = parseOrBadRequest(trendQuerySchema, query);
 
-    return serveWithCacheHeaders(await this.traffic.getTrend(window), response);
+    return serveWithCacheHeaders(
+      await this.traffic.getTrend(window, countries),
+      response,
+    );
   }
 
   @Get("by-country")

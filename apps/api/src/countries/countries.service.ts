@@ -15,6 +15,22 @@ export class CountriesService {
     return { data: countries };
   }
 
+  async assertAllExist(codes: readonly CountryCode[]): Promise<void> {
+    if (codes.length === 0) return;
+
+    const found = await this.prisma.country.findMany({
+      where: { code: { in: [...codes] } },
+      select: { code: true },
+    });
+    const knownCodes = new Set(found.map((country) => country.code));
+    const unknown = codes.filter((code) => !knownCodes.has(code));
+
+    if (unknown.length > 0)
+      throw new BadRequestException(
+        `Unknown country codes: ${unknown.join(", ")}`,
+      );
+  }
+
   async assertExists(code: CountryCode): Promise<void> {
     const country = await this.prisma.country.findUnique({
       where: { code },
