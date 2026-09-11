@@ -1,5 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MAX_TREND_COUNTRIES } from "@traffic-dashboard/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fetchCountries, fetchTrend } from "../../lib/api";
@@ -125,41 +126,46 @@ describe("TrendChart", () => {
 
   it("stops adding at the maximum and restores the control after a removal", async () => {
     const user = userEvent.setup();
-    const manyCountries = [
-      trendSeries("US", "United States", [1, 1, 1]),
-      trendSeries("BR", "Brazil", [1, 1, 1]),
-      trendSeries("JP", "Japan", [1, 1, 1]),
-      trendSeries("DE", "Germany", [1, 1, 1]),
-      trendSeries("FR", "France", [1, 1, 1]),
-      trendSeries("IT", "Italy", [1, 1, 1]),
-      trendSeries("ES", "Spain", [1, 1, 1]),
-      trendSeries("NL", "Netherlands", [1, 1, 1]),
-    ];
+    const catalogue = Array.from(
+      { length: MAX_TREND_COUNTRIES + 2 },
+      (_, index) => ({
+        code: `X${String.fromCharCode(65 + index)}`,
+        name: `Country ${String.fromCharCode(65 + index)}`,
+      }),
+    );
 
-    trend.mockResolvedValue(fetched(trendResponse(manyCountries)));
-    countries.mockResolvedValue({
-      data: manyCountries.map((item) => ({
-        code: item.countryCode,
-        name: item.countryName,
-      })),
-    });
+    trend.mockResolvedValue(
+      fetched(
+        trendResponse(
+          catalogue
+            .slice(0, 2)
+            .map((entry) => trendSeries(entry.code, entry.name, [1, 1, 1])),
+        ),
+      ),
+    );
+    countries.mockResolvedValue({ data: catalogue });
 
     renderWithProviders(<TrendChart />);
 
-    await screen.findAllByText(/United States/);
+    await screen.findByRole("option", { name: catalogue[2].name });
 
-    const addCountry = screen.getByLabelText("Add country");
-
-    await user.selectOptions(addCountry, "IT");
-    await user.selectOptions(screen.getByLabelText("Add country"), "ES");
-    await user.selectOptions(screen.getByLabelText("Add country"), "NL");
+    for (const entry of catalogue.slice(2, MAX_TREND_COUNTRIES)) {
+      await user.selectOptions(
+        screen.getByLabelText("Add country"),
+        entry.code,
+      );
+    }
 
     expect(screen.getByLabelText("Add country")).toBeDisabled();
     expect(
-      screen.getByText("Showing the maximum of 8 countries."),
+      screen.getByText(
+        `Showing the maximum of ${MAX_TREND_COUNTRIES} countries.`,
+      ),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Remove Italy" }));
+    await user.click(
+      screen.getByRole("button", { name: `Remove ${catalogue[0].name}` }),
+    );
 
     expect(screen.getByLabelText("Add country")).toBeEnabled();
   });

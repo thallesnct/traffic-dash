@@ -4,7 +4,13 @@ import {
   byCountryQuerySchema,
   byVehicleTypeQuerySchema,
   trendQuerySchema,
+  MAX_TREND_COUNTRIES,
 } from "./query";
+
+const tooManyCountries = Array.from(
+  { length: MAX_TREND_COUNTRIES + 1 },
+  (_, index) => `X${String.fromCharCode(65 + index)}`,
+).join(",");
 
 describe("Traffic queries", () => {
   it("defaults trend and country-aggregate windows", () => {
@@ -32,8 +38,7 @@ describe("Traffic queries", () => {
   it("rejects an empty, oversized, or malformed trend country list", () => {
     expect(trendQuerySchema.safeParse({ countries: "" }).success).toBe(false);
     expect(
-      trendQuerySchema.safeParse({ countries: "US,BR,JP,DE,FR,IT,ES,NL,PT" })
-        .success,
+      trendQuerySchema.safeParse({ countries: tooManyCountries }).success,
     ).toBe(false);
     expect(trendQuerySchema.safeParse({ countries: "USA" }).success).toBe(
       false,
